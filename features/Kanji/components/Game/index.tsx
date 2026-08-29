@@ -91,7 +91,11 @@ const Game = () => {
 
     const resolveSelection = async () => {
       const handoff = readAutoLearningHandoff('kanji');
-      if (!handoff) {
+      const manualSelection = useKanjiStore.getState().selectedKanjiSets;
+      const hasManualSelection = manualSelection.length > 0;
+
+      // Only apply the auto-learning selection when there is no manual selection.
+      if (!handoff || hasManualSelection) {
         setIsSelectionReady(true);
         return;
       }
