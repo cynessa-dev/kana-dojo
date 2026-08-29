@@ -75,7 +75,11 @@ const Game = () => {
 
   useEffect(() => {
     const handoff = readAutoLearningHandoff('kana');
-    if (handoff) {
+    const manualSelection = useKanaStore.getState().kanaGroupIndices;
+    const hasManualSelection = manualSelection.length > 0;
+
+    // Only apply the auto-learning selection when there is no manual selection.
+    if (handoff && !hasManualSelection) {
       isAutoLearningSessionRef.current = true;
       replaceGroups(
         handoff.sets.flatMap(set =>
@@ -85,10 +89,13 @@ const Game = () => {
           ),
         ),
       );
+
       setGameMode(handoff.gameMode);
       setAutoSelectionActive('kana', true);
       clearAutoLearningHandoff();
     }
+
+    // Mark initialization as complete after preserving or applying the selection.
     setIsSelectionReady(true);
   }, [replaceGroups, setAutoSelectionActive, setGameMode]);
 
